@@ -1,28 +1,31 @@
 use serde_derive::{Deserialize, Serialize};
 use std::fs;
+use crate::{CONFIG, ERROR_MESSAGE};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Copy, Clone)]
 pub struct Config {
-    client_id: u64,
-    change_duration: u8,
-    game_list: Vec<GameList>,
+    pub client_id: u64,
+    pub change_duration: u8,
+    pub exit_on_disconnect: bool,
+    pub exit_on_error: bool,
+    pub game_list: Vec<GameList>,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Copy, Clone)]
 pub struct GameList {
-    details: Option<String>,
-    state: Option<String>,
-    large_image: Option<String>,
-    large_text: Option<String>,
-    small_image: Option<String>,
-    small_text: Option<String>,
-    buttons: Vec<Button>,
+    pub details: Option<String>,
+    pub state: Option<String>,
+    pub large_image: Option<String>,
+    pub large_text: Option<String>,
+    pub small_image: Option<String>,
+    pub small_text: Option<String>,
+    pub buttons: Vec<Button>,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Copy, Clone)]
 pub struct Button {
-    title: String,
-    url: String,
+    pub title: String,
+    pub url: String,
 }
 
 pub fn load_config() -> Config {
@@ -35,6 +38,8 @@ pub fn load_config() -> Config {
             let cfg = Config {
                 client_id: 814550660544200725,
                 change_duration: 10,
+                exit_on_disconnect: true,
+                exit_on_error: false,
                 game_list: vec![GameList {
                     details: Some("this is the first line of your RPC".to_string()),
                     state: Some("this is the second line of your RPC".to_string()),
@@ -48,12 +53,16 @@ pub fn load_config() -> Config {
                     }],
                 }],
             };
-            fs::write("config.json", serde_json::to_string_pretty(&cfg).expect("this shouldn't've happened: report it in the support server and include this backtrace"));
+            fs::write("config.json", serde_json::to_string_pretty(&cfg).expect(ERROR_MESSAGE));
 
             panic!("new config written to disk, edit it and rerun this file")
         }
     };
 
-    serde_json::from_slice(&cfg[..])
-        .expect("failed to load config: make sure it's formatted properly")
+    let cfg: Config = serde_json::from_slice(&cfg[..])
+        .expect("failed to load config: make sure it's formatted properly");
+
+    CONFIG.set(cfg.clone()).expect(ERROR_MESSAGE);
+
+    cfg
 }
