@@ -2,7 +2,7 @@ use serde_derive::{Deserialize, Serialize};
 use std::fs;
 use crate::{CONFIG, ERROR_MESSAGE};
 
-#[derive(Serialize, Deserialize, Copy, Clone)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct Config {
     pub client_id: u64,
     pub change_duration: u8,
@@ -11,7 +11,7 @@ pub struct Config {
     pub game_list: Vec<GameList>,
 }
 
-#[derive(Serialize, Deserialize, Copy, Clone)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct GameList {
     pub details: Option<String>,
     pub state: Option<String>,
@@ -22,7 +22,7 @@ pub struct GameList {
     pub buttons: Vec<Button>,
 }
 
-#[derive(Serialize, Deserialize, Copy, Clone)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct Button {
     pub title: String,
     pub url: String,
@@ -62,7 +62,7 @@ pub fn load_config() -> Config {
     let cfg: Config = serde_json::from_slice(&cfg[..])
         .expect("failed to load config: make sure it's formatted properly");
 
-    CONFIG.set(cfg.clone()).expect(ERROR_MESSAGE);
+    CONFIG.set(cfg.clone()).unwrap_or_else(|_| {panic!("{}", ERROR_MESSAGE)});
 
     cfg
 }

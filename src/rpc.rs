@@ -17,9 +17,9 @@ impl EventHandlers for RpcEventHandler {
         let msg = format!("error with RPC, code {}, message `{}`", code, message);
 
         if CONFIG.get().expect(ERROR_MESSAGE).exit_on_error {
-            panic!(msg)
+            panic!("{}", msg)
         } else {
-            eprintln!(msg)
+            eprintln!("{}", msg)
         }
     }
 
@@ -30,14 +30,14 @@ impl EventHandlers for RpcEventHandler {
         );
 
         if CONFIG.get().expect(ERROR_MESSAGE).exit_on_disconnect {
-            panic!(msg)
+            panic!("{}", msg)
         } else {
-            println!(msg)
+            println!("{}", msg)
         }
     }
 }
 
-pub fn get_discord_client(app_id: impl Into<&str>) -> Rustcord {
+pub fn get_discord_client<'a>(app_id: impl Into<&'a str>) -> Rustcord {
     Rustcord::init::<RpcEventHandler>(app_id.into(), false, None)
         .expect(ERROR_MESSAGE)
 }

@@ -1,6 +1,4 @@
-#![feature(once_cell)]
-
-use std::lazy::OnceCell;
+use once_cell::sync::OnceCell;
 
 pub mod config;
 pub mod entrypoint;
