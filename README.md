@@ -4,20 +4,48 @@ DCustomRPC is a custom rich presence client that you (you right there, yes you) 
 
 ## Downloads
 
-[Linux]()
+[Linux](https://github.com/tazz4843/DCustomRPC-v2/releases/download/v1.0.0/DCustomRPC-v2-x86_64-linux)
+[Windows](https://github.com/tazz4843/DCustomRPC-v2/releases/download/v1.0.0/DCustomRPC-v2-x86_64-windows.exe)
 
 ## Setup the Discord Application
 1. Run the executable once. This will create a new file named `config.json`.
 2. Next go to Discord Developers (https://discord.com/developers/applications/) and sign in.
 3. From here, click the "New App" button and enter a "App Name". This will show as what you are playing. "App Description" and "App Icon" do not matter for rich presence.
 4. After you have done this, you can copy the "Client ID" (under "App Details") and replace the client_id already in the config file.
-5. 
+5. You can set up the config as you desire here.
 
 ## Discord Prerequisites
 
 Please make sure that game statuses are turned on:
 
 ![Game Toggle](https://i.imgur.com/V4FWevH.png)
+
+## Config Details
+
+`client_id`: Your Discord application ID.
+
+`change_duration`: How often (in seconds) your game should switch. Must be >0 and <255.
+
+`game_list`: A list of games to rotate through.
+### `game_list` keys
+`details`: Line 1 of your status.
+
+`state`: Line 2 of your status.
+
+`large_image`: The large image to display. Must correspond with one of the images uploaded to the Discord Developer Portal.
+
+`large_text`: The tooltip to display when hovering over the large image.
+
+`small_image`: The small image to display. Must correspond with one of the images uploaded to the Discord Developer Portal.
+
+`small_text`: The tooltip to display when hovering over the small image.
+
+`buttons`: List of buttons to display. Max of 2.
+
+#### `buttons` keys
+`title`: The text to show on the button.
+
+`url`: The URL to send users to when they click on the button.
 
 ## Useful Links
 
