@@ -61,12 +61,13 @@ pub fn entrypoint() {
                 .expect("failed to update activity");
 
             #[cfg(debug_assertions)]
-            let tt = st
-                .elapsed()
-                .expect("your system clock rolled back")
-                .as_nanos();
-            #[cfg(debug_assertions)]
-            println!("updated status in {}ns", tt);
+            {
+                let tt = st
+                    .elapsed()
+                    .expect("your system clock rolled back")
+                    .as_nanos();
+                println!("updated status in {}ns", tt);
+            }
 
             println!("updated status");
 
