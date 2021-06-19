@@ -6,7 +6,7 @@ fn main() {
     println!("For support join the Discord at https://discord.gg/5yXExTsRye");
     println!("Current version {}", env!("CARGO_PKG_VERSION"));
 
-    let cfg = load_config();
+    load_config();
 
     entrypoint()
 }

@@ -5,3 +5,5 @@
 Cargo.lock
 
 config.json
+
+discord_game_sdk/
