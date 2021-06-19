@@ -1,5 +1,6 @@
 use crate::activity::{Activity, Assets, Party, Timestamps};
 use crate::rpc::get_discord_client;
+use crate::signal_handler::register_handler;
 use crate::{CONFIG, ERROR_MESSAGE};
 use discord_rich_presence::DiscordIpc;
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -18,13 +19,7 @@ pub fn entrypoint() {
     let shutdown = Arc::new(AtomicBool::new(false));
 
     // sigint/ctrl+c handler
-    let shutdown_ref = Arc::clone(&shutdown);
-    ctrlc::set_handler(move || {
-        println!("shutting down, don't press ctrl+c again!");
-        eprintln!("you can safely ignore any status update failures after this");
-        shutdown_ref.swap(true, Ordering::Relaxed);
-    })
-    .expect(ERROR_MESSAGE);
+    register_handler(&shutdown);
 
     println!("initialized RPC!");
 
