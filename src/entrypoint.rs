@@ -1,6 +1,7 @@
+use crate::activity::{Activity, Assets, Party, Timestamps};
 use crate::rpc::get_discord_client;
 use crate::{CONFIG, ERROR_MESSAGE};
-use discord_game_sdk::Activity;
+use discord_rich_presence::DiscordIpc;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use std::thread;
@@ -11,6 +12,7 @@ pub fn entrypoint() {
 
     println!("initializing RPC...");
     let mut client = get_discord_client(cfg.client_id);
+    client.connect().expect("failed to connect to discord");
 
     // flag to tell the mainloop to shut down
     let shutdown = Arc::new(AtomicBool::new(false));
@@ -38,45 +40,36 @@ pub fn entrypoint() {
             let st = SystemTime::now();
             println!("updating activity...");
 
-            let mut rpc = Activity::empty();
-            if let Some(ref details) = item.details {
-                rpc.with_details(details.as_str());
-            }
-            rpc.with_end_time(
-                (end_time
+            let activity = Activity {
+                state: item.state.clone(),
+                details: item.details.clone(),
+                timestamps: Some(Timestamps {
+                    start: None,
+                    end: Some(end_time
                     .duration_since(SystemTime::UNIX_EPOCH)
                     .expect("check your system clock, it's set to before 1 Jan 1970 00:00:00+00:00")
-                    .as_secs()) as i64,
-            );
-            if let Some(ref large_image) = item.large_image {
-                rpc.with_large_image_key(large_image.as_str());
-            }
-            if let Some(ref large_text) = item.large_text {
-                rpc.with_large_image_tooltip(large_text.as_str());
-            }
+                    .as_secs() as i32)
+                }),
+                assets: Some(Assets {
+                    large_image: item.large_image.clone(),
+                    large_text: item.large_text.clone(),
+                    small_image: item.small_image.clone(),
+                    small_text: item.small_text.clone()
+                }),
+                party: Some(Party {
+                    size: Some([(i + 1) as u32, party_max])
+                })
+            };
 
-            rpc.with_party_amount(party_max);
-            rpc.with_party_capacity((i + 1) as u32);
-
-            if let Some(ref small_image) = item.small_image {
-                rpc.with_small_image_key(small_image.as_str());
-            }
-            if let Some(ref small_text) = item.small_text {
-                rpc.with_small_image_tooltip(small_text.as_str());
-            }
-            if let Some(ref state) = item.state {
-                rpc.with_state(state.as_str());
-            }
-
-            client.update_activity(&rpc, |_, r| {
-                if let Err(e) = r {
-                    eprintln!("failed to update activity: {}", e);
-                }
-            });
-            client.run_callbacks().expect(ERROR_MESSAGE);
+            client
+                .set_activity(activity)
+                .expect("failed to update activity");
 
             #[cfg(debug_assertions)]
-            let tt = st.elapsed().expect("your system clock rolled back").as_nanos();
+            let tt = st
+                .elapsed()
+                .expect("your system clock rolled back")
+                .as_nanos();
             #[cfg(debug_assertions)]
             println!("updated status in {}ns", tt);
 
@@ -89,4 +82,7 @@ pub fn entrypoint() {
             }
         }
     }
+    client
+        .close()
+        .expect("failed to shut down client: restart discord to fix BrokenPipe errors with RPC");
 }

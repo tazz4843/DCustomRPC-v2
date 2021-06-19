@@ -1,10 +1,6 @@
 use crate::ERROR_MESSAGE;
-use discord_game_sdk::{CreateFlags, Discord, EventHandler};
+use discord_rich_presence::{new_client, DiscordIpc};
 
-pub struct RpcEventHandler;
-
-impl EventHandler for RpcEventHandler {}
-
-pub fn get_discord_client(app_id: u64) -> Discord<'static, RpcEventHandler> {
-    Discord::with_create_flags(app_id as i64, CreateFlags::Default).expect(ERROR_MESSAGE)
+pub fn get_discord_client(app_id: u64) -> impl DiscordIpc {
+    new_client(app_id.to_string().as_str()).expect(ERROR_MESSAGE)
 }
