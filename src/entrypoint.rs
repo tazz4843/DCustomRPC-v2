@@ -28,6 +28,10 @@ pub fn entrypoint() {
 
     'outer: loop {
         for (i, item) in cfg.game_list.iter().enumerate() {
+            if shutdown.load(Ordering::Relaxed) {
+                break 'outer;
+            }
+
             let start_time = SystemTime::now();
             let end_time = start_time + time_per_loop;
 
@@ -72,10 +76,6 @@ pub fn entrypoint() {
             println!("updated status");
 
             thread::sleep(time_per_loop);
-
-            if shutdown.load(Ordering::Relaxed) {
-                break 'outer;
-            }
         }
     }
     client
