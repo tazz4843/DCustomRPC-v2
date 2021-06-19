@@ -77,6 +77,7 @@ pub fn entrypoint() {
 
             #[cfg(debug_assertions)]
             let tt = st.elapsed().expect("your system clock rolled back").as_nanos();
+            #[cfg(debug_assertions)]
             println!("updated status in {}ns", tt);
 
             println!("updated status");
