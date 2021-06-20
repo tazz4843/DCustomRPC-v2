@@ -1,6 +1,5 @@
 use once_cell::sync::OnceCell;
 
-pub mod activity;
 pub mod config;
 pub mod entrypoint;
 pub mod rpc;

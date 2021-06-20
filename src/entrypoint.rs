@@ -1,4 +1,3 @@
-use crate::activity::{Activity, Assets, Party, Timestamps};
 use crate::rpc::get_discord_client;
 use crate::signal_handler::register_handler;
 use crate::{CONFIG, ERROR_MESSAGE};
