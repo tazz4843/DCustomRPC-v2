@@ -6,6 +6,7 @@ use std::fs;
 pub struct Config {
     pub client_id: u64,
     pub change_duration: u8,
+    pub exit_on_error: bool,
     pub game_list: Vec<GameList>,
 }
 
@@ -36,6 +37,7 @@ pub fn load_config() -> Config {
             let cfg = Config {
                 client_id: 814550660544200725,
                 change_duration: 10,
+                exit_on_error: false,
                 game_list: vec![GameList {
                     details: Some("this is the first line of your RPC".to_string()),
                     state: Some("this is the second line of your RPC".to_string()),

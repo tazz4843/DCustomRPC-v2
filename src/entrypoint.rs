@@ -93,7 +93,13 @@ pub fn entrypoint() {
 
             client
                 .set_activity(activity)
-                .expect("failed to update activity");
+                .unwrap_or_else(|e| {
+                    if CONFIG.get().expect(ERROR_MESSAGE).exit_on_error {
+                        panic!("error while updating status: {}", e)
+                    } else {
+                        eprintln!("error while updating status: {}", e)
+                    }
+                });
 
             #[cfg(debug_assertions)]
             {
