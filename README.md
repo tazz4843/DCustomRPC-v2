@@ -7,10 +7,10 @@ Now you don't have to worry about installing dependencies ~~(rust > python)~~!
 ## Downloads
 
 [Linux](
-https://github.com/tazz4843/DCustomRPC-v2/releases/download/v1.0.0/DCustomRPC-v2-x86_64-linux)
+https://github.com/tazz4843/DCustomRPC-v2/releases/download/v1.1.0/DCustomRPC-v2-x86_64-linux)
 
 [Windows](
-https://github.com/tazz4843/DCustomRPC-v2/releases/download/v1.0.0/DCustomRPC-v2-x86_64-windows.exe)
+https://github.com/tazz4843/DCustomRPC-v2/releases/download/v1.1.0/DCustomRPC-v2-x86_64-windows.exe)
 
 No MacOS downloads. You must build it manually.
 
@@ -77,7 +77,7 @@ The executable is located in `target/release/`.
 
 [Rust](https://rust-lang.org)
 
-[Repo Download: Stable](https://github.com/tazz4843/DCustomRPC-v2/archive/refs/tags/v1.0.0.zip)
+[Repo Download: Stable](https://github.com/tazz4843/DCustomRPC-v2/archive/refs/tags/v1.1.0.zip)
 
 [Repo Download: Beta](https://github.com/tazz4843/DCustomRPC-v2/archive/refs/heads/main.zip) 
 
