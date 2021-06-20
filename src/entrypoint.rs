@@ -36,7 +36,9 @@ pub fn entrypoint() {
 
             #[cfg(debug_assertions)]
             let st = SystemTime::now();
-            println!("updating activity...");
+            if cfg.verbose {
+                println!("updating activity...");
+            }
 
             let mut activity = activity::Activity::new();
             activity = if let Some(ref state) = item.state {
@@ -109,7 +111,9 @@ pub fn entrypoint() {
                 println!("updated status in {}ns", tt);
             }
 
-            println!("updated status");
+            if cfg.verbose {
+                println!("updated status");
+            }
 
             thread::sleep(time_per_loop);
         }
