@@ -11,7 +11,7 @@ pub fn entrypoint() {
     let cfg = CONFIG.get().expect(ERROR_MESSAGE);
 
     println!("initializing RPC...");
-    let mut client = get_discord_client(cfg.client_id);
+    let mut client = get_discord_client();
     client.connect().expect("failed to connect to discord");
 
     // flag to tell the mainloop to shut down
