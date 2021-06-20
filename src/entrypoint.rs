@@ -2,7 +2,7 @@ use crate::activity::{Activity, Assets, Party, Timestamps};
 use crate::rpc::get_discord_client;
 use crate::signal_handler::register_handler;
 use crate::{CONFIG, ERROR_MESSAGE};
-use discord_rich_presence::DiscordIpc;
+use discord_rich_presence::{DiscordIpc, activity};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use std::thread;
@@ -23,7 +23,7 @@ pub fn entrypoint() {
 
     println!("initialized RPC!");
 
-    let party_max = cfg.game_list.len() as u32;
+    let party_max = cfg.game_list.len() as i32;
     let time_per_loop = Duration::from_secs(cfg.change_duration as u64);
 
     'outer: loop {
@@ -39,26 +39,57 @@ pub fn entrypoint() {
             let st = SystemTime::now();
             println!("updating activity...");
 
-            let activity = Activity {
-                state: item.state.clone(),
-                details: item.details.clone(),
-                timestamps: Some(Timestamps {
-                    start: None,
-                    end: Some(end_time
-                    .duration_since(SystemTime::UNIX_EPOCH)
-                    .expect("check your system clock, it's set to before 1 Jan 1970 00:00:00+00:00")
-                    .as_secs() as i32)
-                }),
-                assets: Some(Assets {
-                    large_image: item.large_image.clone(),
-                    large_text: item.large_text.clone(),
-                    small_image: item.small_image.clone(),
-                    small_text: item.small_text.clone()
-                }),
-                party: Some(Party {
-                    size: Some([(i + 1) as u32, party_max])
-                })
+            let mut activity = activity::Activity::new();
+            activity = if let Some(ref state) = item.state {
+                activity.state(state.as_str())
+            } else {
+                activity
             };
+
+            activity = if let Some(ref details) = item.details {
+                activity.details(details.as_str())
+            } else {
+                activity
+            };
+
+            activity = activity.timestamps(activity::Timestamps::new().end(end_time
+                .duration_since(SystemTime::UNIX_EPOCH)
+                .expect("check your system clock, it's set to before 1 Jan 1970 00:00:00+00:00")
+                .as_secs() as i32));
+
+            activity = activity.assets({
+                let mut assets = activity::Assets::new();
+
+                assets = if let Some(ref large_image) = item.large_image {
+                    if let Some(ref large_text) = item.large_text {
+                        assets.large_image(large_image.as_str()).large_text(large_text.as_str())
+                    } else {
+                        assets.large_image(large_image.as_str())
+                    }
+                } else {
+                    assets
+                };
+
+                assets = if let Some(ref small_image) = item.small_image {
+                    if let Some(ref small_text) = item.small_text {
+                        assets.small_image(small_image.as_str()).small_text(small_text.as_str())
+                    } else {
+                        assets.small_image(small_image.as_str())
+                    }
+                } else {
+                    assets
+                };
+
+                assets
+            });
+
+            activity = activity.party(activity::Party::new().size([(i + 1) as i32, party_max]));
+
+            let mut buttons = vec![];
+            for button in item.buttons.iter() {
+                buttons.push(activity::Button::new(button.title.as_str(), button.url.as_str()))
+            }
+            activity = activity.buttons(buttons);
 
             client
                 .set_activity(activity)

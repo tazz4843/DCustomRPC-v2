@@ -49,7 +49,12 @@ pub fn load_config() -> Config {
                     }],
                 }],
             };
-            fs::write("config.json", serde_json::to_string_pretty(&cfg).expect(ERROR_MESSAGE)).expect("couldn't write config to disk, do you have perms to write to the current directory?");
+            fs::write(
+                "config.json",
+                serde_json::to_string_pretty(&cfg)
+                    .expect(ERROR_MESSAGE)
+            )
+                .expect("couldn't write config to disk, do you have perms to write to the current directory?");
 
             panic!("new config written to disk, edit it and rerun this file")
         }
@@ -57,6 +62,12 @@ pub fn load_config() -> Config {
 
     let cfg: Config = serde_json::from_slice(&cfg[..])
         .expect("failed to load config: make sure it's formatted properly");
+
+    for i in cfg.game_list.iter() {
+        if i.buttons.len() > 2 {
+            panic!("you can't have more than two buttons in a page!")
+        }
+    }
 
     CONFIG
         .set(cfg.clone())
