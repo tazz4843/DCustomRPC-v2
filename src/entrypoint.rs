@@ -56,7 +56,7 @@ pub fn entrypoint() {
             activity = activity.timestamps(activity::Timestamps::new().end(end_time
                 .duration_since(SystemTime::UNIX_EPOCH)
                 .expect("check your system clock, it's set to before 1 Jan 1970 00:00:00+00:00")
-                .as_secs() as i32));
+                .as_secs() as i64));
 
             activity = activity.assets({
                 let mut assets = activity::Assets::new();
